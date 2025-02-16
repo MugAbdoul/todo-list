@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>📝 To-Do List</h1>
+
+        <!-- Search Bar -->
+        <form method="get" action="{{ url_for('index') }}" class="search-bar">
+            <input type="text" name="search" placeholder="🔍 Search tasks..." value="{{ search_query }}">
+            <button type="submit">Search</button>
+        </form>
+
+        <!-- Add Task -->
+        <form action="{{ url_for('add_task') }}" method="post" class="add-task">
+            <input type="text" name="task" placeholder="➕ Add a new task..." required>
+            <button type="submit">➕</button>
+        </form>
+
+        <!-- Task List -->
+        <ul class="task-list">
+            {% for task in tasks %}
+            <li>
+                <form action="{{ url_for('update_task', task_id=task[0]) }}" method="post">
+                    <span contenteditable="true" oninput="updateHiddenInput(this)">{{ task[1] }}</span>
+                    <input type="hidden" name="task" value="{{ task[1] }}">
+                    <div>
+                        <button type="submit" class="save-btn">💾</button>
+                        <a href="{{ url_for('delete_task', task_id=task[0]) }}" class="delete-btn">🗑</a>
+                    </div>
+                </form>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <script>
+        // Auto-update hidden input when user edits the task text
+            function updateHiddenInput(element) {
+                let form = element.parentElement;
+                let hiddenInput = form.querySelector("input[type='hidden']");
+                hiddenInput.value = element.innerText;
+            }
+
+    </script>
+</body>
+</html>
